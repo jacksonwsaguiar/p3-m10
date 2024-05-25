@@ -6,13 +6,12 @@ Esta aplicação é composta por múltiplos microserviços desenvolvidos em Node
 
 1. **Serviço de User (user-service)**
     - Gerencia a criação de contas e o login dos usuários.
-    - Gerencia o upload de imagens pelos usuários.
-    - Envia imagens para o RabbitMQ para processamento.
 
 2. **Serviço de Processamento de Imagens (proccess-image-service)**
-    - Consome mensagens de imagens do RabbitMQ.
-    - Converte as imagens para preto e branco.
+    - Gerencia o upload de imagens pelos usuários.
+    - Converte a imagen para preto e branco.
     - Notifica que o processo acabou.
+    - Envia logs das etapadas.
 
 3. **Serviço de Log (log-service)**
     - Registra ações dos usuários, como login, criação de conta e upload e processamento de imagens.

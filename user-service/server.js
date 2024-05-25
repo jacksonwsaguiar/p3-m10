@@ -47,7 +47,7 @@ app.post("/register", async (req, res) => {
 
   sendToQueue({ action: "create_account", username }, "logger");
 
-  res.status(201).send("User created");
+  res.status(201).json("User created");
 });
 
 app.post("/login", async (req, res) => {
@@ -65,25 +65,6 @@ app.post("/login", async (req, res) => {
   } else {
     res.status(401).send("Invalid credentials");
   }
-});
-
-app.post("/upload", upload.single("image"), async (req, res) => {
-  const username = req.body.username;
-  const imagePath = req.file.path;
-
-  const imageBuffer = fs.readFileSync(imagePath);
-  const imageBase64 = imageBuffer.toString("base64");
-
-  const message = {
-    username,
-    image: imageBase64,
-    filename: req.file.originalname,
-  };
-
-  await sendToQueue({ action: "image-uploaded", username }, "logger");
-  await sendToQueue(message, "image");
-
-  res.send("Image uploaded and processing started");
 });
 
 app.listen(3001, () => {
