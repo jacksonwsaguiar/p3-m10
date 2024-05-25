@@ -24,7 +24,7 @@ Esta aplicação é composta por múltiplos microserviços desenvolvidos em Node
     - Porta de entrada para os microserviços.
     - Encaminha as requisições para os serviços apropriados.
 
-## Estrutura do Projeto
+## Estrutura do Projeto backend
 
 ```bash
 ├── user-service
@@ -53,4 +53,21 @@ Esta aplicação é composta por múltiplos microserviços desenvolvidos em Node
 
 ```bash
     docker-compose up --build
+```
+
+## Estrutura do App
+
+```bash
+├── controller
+├── services
+├── views
+└── main.dart
+```
+## Executando o app
+
+```bash
+    cd mobile_app
+```
+```bash
+    flutter run
 ```
