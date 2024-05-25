@@ -66,7 +66,7 @@ app.post("/upload", upload.single("image"), async (req, res) => {
 
       return res.json({
         message: "Image uploaded and processed",
-        image: outputPath,
+        image: "bw-" + req.file.originalname,
       });
     })
     .then(() => {

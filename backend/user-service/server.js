@@ -2,15 +2,12 @@ const express = require("express");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const axios = require("axios");
 const amqp = require("amqplib");
-
-const upload = multer({ dest: "uploads/" });
 
 const app = express();
 app.use(express.json());
 
-mongoose.connect("mongodb://localhost/auth-service", {
+mongoose.connect("mongodb+srv://jacksonaguiar:fGZAQgHzjlyIXcSJ@cluster0.zkykwzk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
