@@ -6,8 +6,8 @@ const app = express();
 app.use(express.json());
 
 mongoose.connect("mongodb+srv://jacksonaguiar:fGZAQgHzjlyIXcSJ@cluster0.zkykwzk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+  // useNewUrlParser: true,
+  // useUnifiedTopology: true,
 });
 
 const LogSchema = new mongoose.Schema({
@@ -19,7 +19,7 @@ const LogSchema = new mongoose.Schema({
 const Log = mongoose.model("Log", LogSchema);
 
 async function consumeFromQueue() {
-  const connection = await amqp.connect("amqp://localhost");
+  const connection = await amqp.connect("amqp://rabbitmq");
   const channel = await connection.createChannel();
   const queue = "logger";
 
@@ -43,7 +43,7 @@ async function consumeFromQueue() {
 }
 
 
-app.listen(3004, () => {
+app.listen(3002, () => {
   console.log("Log service listening on port 3002");
   consumeFromQueue();
 });

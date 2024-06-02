@@ -18,26 +18,34 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          TextField(
-            controller: usernameCtrl,
-            decoration: InputDecoration(label: Text("Email")),
-          ),
-          TextField(
-            controller: passwordCtrl,
-            decoration: InputDecoration(label: Text("Password")),
-          ),
-          const SizedBox(height: 50),
-          TextButton(
-              onPressed: () {
-                service
-                    .login(usernameCtrl.text, passwordCtrl.text)
-                    .then((onValue) => Navigator.pushNamed(context, "/login"));
-              },
-              child: Text("Cadastrar"))
-        ],
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "Cadastro",
+              style: TextStyle(fontSize: 32),
+            ),
+            const SizedBox(height: 50),
+            TextField(
+              controller: usernameCtrl,
+              decoration: InputDecoration(label: Text("Username")),
+            ),
+            TextField(
+              controller: passwordCtrl,
+              obscureText: true,
+              decoration: InputDecoration(label: Text("Password")),
+            ),
+            const SizedBox(height: 50),
+            TextButton(
+                onPressed: () {
+                  service.register(usernameCtrl.text, passwordCtrl.text).then(
+                      (onValue) => Navigator.pushNamed(context, "/login"));
+                },
+                child: Text("Cadastrar"))
+          ],
+        ),
       ),
     ));
   }

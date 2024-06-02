@@ -20,7 +20,7 @@ const UserSchema = new mongoose.Schema({
 const User = mongoose.model("User", UserSchema);
 
 async function sendToQueue(message, queue) {
-  const connection = await amqp.connect("amqp://localhost");
+  const connection = await amqp.connect("amqp://rabbitmq");
   const channel = await connection.createChannel();
 
   await channel.assertQueue(queue, {
@@ -64,6 +64,6 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.listen(3001, () => {
-  console.log("Auth service listening on port 3001");
+app.listen(3000, () => {
+  console.log("User service listening on port 3000");
 });

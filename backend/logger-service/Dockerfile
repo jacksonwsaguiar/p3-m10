@@ -1,4 +1,4 @@
-FROM node:14
+FROM node:18
 
 WORKDIR /usr/src/app
 
@@ -10,4 +10,4 @@ COPY . .
 
 EXPOSE 3004
 
-CMD ["node", "index.js"]
+CMD ["node", "server.js"]

@@ -1,14 +1,15 @@
 const express = require("express");
 const amqp = require("amqplib");
 const fs = require("fs");
-const path = require("path");
 const Jimp = require("jimp");
+const multer = require("multer");
 
 const app = express();
 app.use(express.json());
+const upload = multer({ dest: "uploads/" });
 
 async function sendToQueue(message, queue) {
-  const connection = await amqp.connect("amqp://localhost");
+  const connection = await amqp.connect("amqp://rabbitmq");
   const channel = await connection.createChannel();
 
   await channel.assertQueue(queue, {
@@ -26,62 +27,28 @@ async function sendToQueue(message, queue) {
 app.post("/upload", upload.single("image"), async (req, res) => {
   const username = req.body.username;
   const imagePath = req.file.path;
-
-  const imageBuffer = fs.readFileSync(imagePath);
-  const imageBase64 = imageBuffer.toString("base64");
-
-  const inputPath = path.join(
-    __dirname,
-    "processed",
-    "input-" + req.file.originalname
-  );
-  const outputPath = path.join(
-    __dirname,
-    "processed",
-    "bw-" + req.file.originalname
-  );
-
-  fs.writeFileSync(inputPath, imageBase64);
-
   await sendToQueue({ action: "image-uploaded", username }, "logger");
 
-  Jimp.read(inputPath)
-    .then((img) => {
-      return img.greyscale().write(outputPath);
-    })
-    .then(async () => {
-      console.log(
-        `Image converted to black and white and saved to ${outputPath}`
-      );
+  try {
+    const image = await Jimp.read(imagePath);
+    image.greyscale();
 
-      await sendToQueue({ action: "image-proccesed", username }, "logger");
-      await sendToQueue(
-        {
-          title: "imagem processada",
-          message: "finish image conversion",
-          username,
-        },
-        "notification"
-      );
+    const buffer = await image.getBufferAsync(Jimp.MIME_JPEG);
 
-      return res.json({
-        message: "Image uploaded and processed",
-        image: "bw-" + req.file.originalname,
-      });
-    })
-    .then(() => {
-      console.log("Notification sent to", username);
-      channel.ack(msg);
-    })
-    .catch((err) => {
-      console.error("Error processing image:", err);
-      channel.nack(msg);
-    });
-  console.log(`Image saved to ${outputPath}`);
-  return res.json({ message: "not possible process" });
+    await sendToQueue({ action: "image-processed", username }, "logger");
+
+    res.setHeader("Content-Type", "image/jpeg");
+    res.send(buffer);
+
+    console.log(`Image converted to black and white and sent to ${username}`);
+  } catch (err) {
+    console.error("Error processing image:", err);
+    res.status(500).json({ message: "Error processing image" });
+  } finally {
+    fs.unlinkSync(imagePath); // Clean up the uploaded image file
+  }
 });
 
-app.listen(3002, () => {
-  console.log("Notification service listening on port 3004");
-  consumeFromQueue();
+app.listen(3001, () => {
+  console.log("Process image service listening on port 3001");
 });

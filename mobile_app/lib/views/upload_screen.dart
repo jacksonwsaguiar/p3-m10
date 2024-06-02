@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_app/controllers/Image_controller.dart';
 import 'package:mobile_app/services/image_service.dart';
@@ -13,7 +15,7 @@ class UploadImageScreen extends StatefulWidget {
 
 class _UploadImageScreenState extends State<UploadImageScreen> {
   File? image;
-  final String imageWithFilter = "";
+  dynamic imageWithFilter = "";
 
   final imgController = ImageController();
   final service = ImageService();
@@ -27,7 +29,18 @@ class _UploadImageScreenState extends State<UploadImageScreen> {
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          Container(),
+          if (image != null)
+            Image.file(
+              image!,
+              width: 300,
+              height: 300,
+            )
+          else
+            Icon(Icons.image_not_supported_sharp),
+          const SizedBox(height: 20),
           ElevatedButton(
               onPressed: () async {
                 final file = await imgController.getImage();
@@ -37,12 +50,26 @@ class _UploadImageScreenState extends State<UploadImageScreen> {
                 });
               },
               child: const Text("Upload image")),
+          const SizedBox(height: 20),
           if (image != null)
             ElevatedButton(
                 onPressed: () async {
-                  await service.uploadImage(image!);
+                  var res = await service.uploadImage(image!);
+
+                  await AwesomeNotifications().createNotification(
+                      content: NotificationContent(
+                          id: -1,
+                          channelKey: "alerts",
+                          title: 'Imagem processada',
+                          body:
+                              "Imagem convertida para preto e branco com sucesso!"));
+
+                  setState(() {
+                    imageWithFilter = res;
+                  });
                 },
                 child: const Text("Processar")),
+          const SizedBox(height: 20),
           if (imageWithFilter.isNotEmpty)
             ElevatedButton(
                 onPressed: () {
@@ -54,7 +81,7 @@ class _UploadImageScreenState extends State<UploadImageScreen> {
     ));
   }
 
-  void _showImageAlertDialog(BuildContext context, String src) {
+  void _showImageAlertDialog(BuildContext context, Uint8List src) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -63,12 +90,10 @@ class _UploadImageScreenState extends State<UploadImageScreen> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Image.network(
-                'http://localhost:80/processed/$src',
+              Image.memory(
+                src,
                 width: 200,
               ),
-              const SizedBox(height: 16), // Adjust spacing as needed
-              const Text('This is your image description.'),
             ],
           ),
           actions: <Widget>[

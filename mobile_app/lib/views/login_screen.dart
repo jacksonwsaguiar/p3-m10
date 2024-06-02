@@ -18,30 +18,40 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          TextField(
-            controller: usernameCtrl,
-            decoration: InputDecoration(label: Text("Email")),
-          ),
-          TextField(
-            controller: passwordCtrl,
-            decoration: InputDecoration(label: Text("Password")),
-          ),
-          const SizedBox(height: 50),
-          ElevatedButton(
-              onPressed: () {
-                service
-                    .login(usernameCtrl.text, passwordCtrl.text)
-                    .then((onValue) => Navigator.pushNamed(context, "/upload"));
-              },
-              child: Text("Entrar")),
-          const SizedBox(height: 20),
-          TextButton(
-              onPressed: () => Navigator.pushNamed(context, "/signup"),
-              child: Text("Cadastrar-se"))
-        ],
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              "Login",
+              style: TextStyle(fontSize: 32),
+            ),
+            const SizedBox(height: 50),
+            TextField(
+              controller: usernameCtrl,
+              decoration: const InputDecoration(label: Text("Username")),
+            ),
+            TextField(
+              controller: passwordCtrl,
+              obscureText: true,
+              decoration: const InputDecoration(
+                label: Text("Password"),
+              ),
+            ),
+            const SizedBox(height: 50),
+            ElevatedButton(
+                onPressed: () {
+                  service.login(usernameCtrl.text, passwordCtrl.text).then(
+                      (onValue) => Navigator.pushNamed(context, "/upload"));
+                },
+                child: const Text("Entrar")),
+            const SizedBox(height: 20),
+            TextButton(
+                onPressed: () => Navigator.pushNamed(context, "/signup"),
+                child: const Text("Cadastrar-se"))
+          ],
+        ),
       ),
     ));
   }
