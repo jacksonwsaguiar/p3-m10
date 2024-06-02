@@ -73,7 +73,7 @@ Esta aplicação é composta por múltiplos microserviços desenvolvidos em Node
 ```
 
 ## Demonstração
-![link para a demonstração](https://drive.google.com/file/d/1KzF2Bku1ADvZos-f8yNu3bz8rSKLLKdk/view?usp=sharing)
+[link para a demonstração](https://drive.google.com/file/d/1KzF2Bku1ADvZos-f8yNu3bz8rSKLLKdk/view?usp=sharing)
 
 ## Logs
 ![Demonstração dos logs](logs.png)
